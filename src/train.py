@@ -35,8 +35,8 @@ def main():
 
     # TRAINING CONFIG
     training_arguments = TrainingArguments(
-        per_device_train_batch_size=2,
-        per_device_eval_batch_size=2,
+        per_device_train_batch_size=4,
+        per_device_eval_batch_size=4,
         gradient_accumulation_steps=4,
         num_train_epochs=3,
         evaluation_strategy="steps",
@@ -69,7 +69,7 @@ def main():
         dataset_text_field="text",
         max_seq_length=1024,
         dataset_num_proc=2,
-        packing=False,
+        packing=True,
         args=training_arguments,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
     )
