@@ -51,23 +51,32 @@ def preprocess_data(df):
     for col in df.columns:
         df[col] = df[col].apply(lambda x: re.sub(r'<.*?>','', str(x)))
         df[col] = df[col].apply(lambda x: x.replace('\n', ' ').strip())
-    
+
     df['q_len'] = df['question'].apply(lambda x: len(str(x).split()))
     df['a_len'] = df['answer'].apply(lambda x: len(str(x).split()))
-    
+
+    cols = ['q_len', 'a_len']
+    for col in cols:
+        df[col] = BoxplotOutlierClipper().fit_transform(df[col])
+
     df = df[df['a_len'] > 3]
+
+
     return df
 
 def split_data(df, train_ratio=0.2):
     train_df, val_df = train_test_split(df, test_size=train_ratio, random_state=42)
     return train_df, val_df
-
+instruction = "Bạn là một bác sĩ am hiểu kiến thức y tế."
 def convert_to_jsonl(df, path):
     with open(path, 'w', encoding='utf-8') as f_out:
         for idx, row in df.iterrows():
             data = {
-                "prompt": row['question'],
-                "response": row['answer']
+                "messages": [
+                    {"role": "system", "content": instruction},
+                    {"role": "user", "content": row['question']},
+                    {"role": "assistant", "content": row['answer']},
+                ]
             }
             f_out.write(json.dumps(data, ensure_ascii=False) + "\n")
 
@@ -77,6 +86,8 @@ if __name__ == "__main__":
     VAL_PATH = get_env('VAL_PATH')
     df = load_data(DATASET_PATH)
     df = preprocess_data(df)
+    df.drop(["q_len", "a_len"], axis=1, inplace=True)
+    df.to_csv("./data/medicalqa.csv", index=False, encoding="utf-8-sig")
     train_df, val_df = split_data(df)
     convert_to_jsonl(train_df, TRAIN_PATH)
     convert_to_jsonl(val_df, VAL_PATH)
