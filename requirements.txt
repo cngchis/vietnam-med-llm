@@ -1,13 +1,13 @@
 # Core
-torch
-transformers
-datasets
-trl
-accelerate
+torch==2.11.0
+transformers==4.57.6
+datasets==4.4.0
+trl==0.26.0
+accelerate==1.13.0
 
 # Unsloth + quantization
 unsloth
-bitsandbytes
+bitsandbytes==0.46.0
 
 # Data
 pandas
