@@ -9,7 +9,7 @@ from src.plot_metrics import plot_training_metrics
 
 def main():
     # ====== CONFIG ======
-    base_model = "unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit"
+    base_model = "unsloth/llama-3-8b-Instruct-bnb-4bit"
     output_dir = "./src/output"
     new_model = "Llama-3.1-8B-Instruct-Medical"
     os.makedirs(output_dir, exist_ok=True)
