@@ -1,12 +1,12 @@
 # Core
-torch==2.3.0
-transformers==4.57.3
+torch
+transformers
 datasets
 trl
 accelerate
 
 # Unsloth + quantization
-unsloth==2025.12.8
+unsloth
 bitsandbytes
 
 # Data
