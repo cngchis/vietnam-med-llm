@@ -1,5 +1,22 @@
-pandas==3.0.2
-python-dotenv==1.2.2
-pyarrow==23.0.1
-seaborn==0.13.2
-scikit-learn==1.8.0
+# Core
+torch==2.3.0
+transformers==4.57.3
+datasets
+trl
+accelerate
+
+# Unsloth + quantization
+unsloth==2025.12.8
+bitsandbytes
+
+# Data
+pandas
+pyarrow
+python-dotenv
+
+# Visualization
+matplotlib
+seaborn
+
+# Optional
+scikit-learn
