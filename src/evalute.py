@@ -1,5 +1,6 @@
 from unsloth import FastLanguageModel
-from src.data_loader import load_dataset, format_chat_template
+import pandas as pd
+from datasets import Dataset
 from trl import SFTTrainer
 
 def main():
@@ -10,8 +11,8 @@ def main():
 
     FastLanguageModel.for_inference(model)
 
-    dataset = load_dataset("./data/test.csv")
-    dataset = dataset.map(format_chat_template, num_proc=4)
+    df = pd.read_json('./data/processed/test.json')
+    dataset = Dataset.from_pandas(df)
 
     trainer = SFTTrainer(
         model=model,

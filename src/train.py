@@ -39,8 +39,8 @@ def main():
         per_device_eval_batch_size=4,
         gradient_accumulation_steps=4,
         num_train_epochs=3,
-        evaluation_strategy="steps",
-        eval_steps=50,
+        eval_strategy="steps",
+        eval_steps=200,
         warmup_steps=50,
         learning_rate=2e-4,
         fp16=not is_bfloat16_supported(),
@@ -52,12 +52,12 @@ def main():
         seed=3407,
         remove_unused_columns=False,
         output_dir=output_dir,
-        save_steps=50,
         save_total_limit=2,
 
         load_best_model_at_end=True,
         metric_for_best_model="eval_loss",
         greater_is_better=False,
+        save_steps=200,
     )
 
     # TRAINER
