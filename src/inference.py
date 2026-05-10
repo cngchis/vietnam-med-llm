@@ -1,15 +1,6 @@
 import torch
 from unsloth import FastLanguageModel
-
-def load_model(base_model, max_seq_length=1024, load_in_4bit=True):
-    model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name=base_model,
-        max_seq_length=max_seq_length,
-        dtype=None,
-        load_in_4bit=load_in_4bit,
-    )
-    return model, tokenizer
-
+from src.model_loader import load_model
 
 def generate_response(
     model,
@@ -63,28 +54,25 @@ def generate_response(
 
 if __name__ == "__main__":
     model, tokenizer = load_model(
-        "./src/output/Llama-3.1-8B-Instruct-Medical",
+        "./src/output/Llama-3-8B-Instruct-Medical",
         load_in_4bit=True
     )
 
-    instruction = """
-    Bạn là một bác sĩ chăm sóc khách hàng tên Chis. 
-    Hãy lịch sự với khách hàng và trả lời tất cả các câu hỏi của họ.
-    """
+    instruction = "You are a customer care doctor. Be polite and answer all questions from the customer."
 
-    print("=== Bác sĩ Chis AI ===")
-    print("Gõ 'exit' hoặc 'quit' để thoát.\n")
+    print("=== Doctor Assistant ===")
+    print("Type 'exit' or 'quit' to exit.\n")
 
     while True:
-        user_input = input("Bạn: ").strip()
+        user_input = input("You: ").strip()
 
         if not user_input:
             continue
 
         if user_input.lower() in ["exit", "quit"]:
-            print("Tạm biệt!")
+            print("Goodbye!")
             break
 
         response = generate_response(model, tokenizer, instruction, user_input)
 
-        print(f"\nBác sĩ Chis: {response}\n")
+        print(f"\nDoctor: {response}\n")
