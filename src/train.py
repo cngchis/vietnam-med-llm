@@ -1,9 +1,10 @@
 import os
+import unsloth
 from transformers import TrainingArguments, EarlyStoppingCallback
 from functools import partial
 from unsloth import is_bfloat16_supported
 from trl import SFTTrainer
-from src.data_loader import load_dataset, format_chat_template, split_dataset
+from src.data_loader import load_my_dataset, split_dataset
 from src.model_loader import load_model, apply_lora
 from src.plot_metrics import plot_training_metrics
 
@@ -21,7 +22,7 @@ def format_chat_template(row, tokenizer):
 
 def main():
     # CONFIG
-    base_model = "unsloth/Meta-Llama-3.1-8B-Instruct"
+    base_model = "unsloth/Meta-Llama-3.1-8B-bnb-4bit"
     output_dir = "outputs"
     new_model = "Llama-3.1-8B-Instruct-Medical"
     os.makedirs(output_dir, exist_ok=True)
@@ -32,7 +33,7 @@ def main():
     model = apply_lora(model)
 
     # LOAD DATA
-    dataset = load_dataset("data/raw/medicalqa.csv")
+    dataset = load_my_dataset("data/raw/medicalqa.csv")
 
     # FORMAT DATA
     dataset = dataset.map(
@@ -51,8 +52,8 @@ def main():
 
     # TRAINING CONFIG
     training_arguments = TrainingArguments(
-        per_device_train_batch_size=8,
-        per_device_eval_batch_size=8,
+        per_device_train_batch_size=4,
+        per_device_eval_batch_size=4,
         gradient_accumulation_steps=2,
         num_train_epochs=3,
         eval_strategy="steps",

@@ -1,4 +1,6 @@
-def load_dataset(path):
+from datasets import load_dataset
+
+def load_my_dataset(path):
     dataset = load_dataset(
         "csv",
         data_files=path,
