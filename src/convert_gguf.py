@@ -40,7 +40,7 @@ def convert_to_gguf():
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     cmd = [
-        "python", str(convert_script),
+        "python3", str(convert_script),
         MERGED_PATH,
         "--outtype", "bf16",
         "--outfile", str(base_gguf),

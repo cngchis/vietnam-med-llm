@@ -58,7 +58,10 @@ if __name__ == "__main__":
         load_in_4bit=True
     )
 
-    instruction = "You are a customer care doctor. Be polite and answer all questions from the customer."
+    instruction = """
+        You are a Vietnamese medical assistant. 
+        Answer accurately, safely, and avoid making medical diagnoses
+        """
 
     print("=== Doctor Assistant ===")
     print("Type 'exit' or 'quit' to exit.\n")

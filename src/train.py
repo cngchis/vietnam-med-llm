@@ -8,21 +8,28 @@ from src.data_loader import load_my_dataset, split_dataset
 from src.model_loader import load_model, apply_lora
 from src.plot_metrics import plot_training_metrics
 
-def format_chat_template(row, tokenizer):
-    instruction = "You are a customer care doctor. Be polite and answer all questions from the customer."
+def make_formatter(tokenizer):
 
-    row_json = [
-        {"role": "system", "content": instruction},
-        {"role": "user", "content": row["question"]},
-        {"role": "assistant", "content": row["answer"]},
-    ]
+    def format_chat_template(row):
+        instruction = """
+        You are a Vietnamese medical assistant. 
+        Answer accurately, safely, and avoid making medical diagnoses
+        """
 
-    row["text"] = tokenizer.apply_chat_template(row_json, tokenize=False)
-    return row
+        messages = [
+            {"role": "system", "content": instruction},
+            {"role": "user", "content": row["question"]},
+            {"role": "assistant", "content": row["answer"]},
+        ]
+
+        row["text"] = tokenizer.apply_chat_template(messages, tokenize=False)
+        return row
+
+    return format_chat_template
 
 def main():
     # CONFIG
-    base_model = "unsloth/Meta-Llama-3.1-8B-bnb-4bit"
+    base_model = "unsloth/Meta-Llama-3.1-8B-Instruct-bnb-4bit"
     output_dir = "outputs"
     new_model = "Llama-3.1-8B-Instruct-Medical"
     os.makedirs(output_dir, exist_ok=True)
@@ -37,7 +44,7 @@ def main():
 
     # FORMAT DATA
     dataset = dataset.map(
-        partial(format_chat_template, tokenizer=tokenizer),
+        make_formatter(tokenizer),
         num_proc=4
     )
 
@@ -52,18 +59,18 @@ def main():
 
     # TRAINING CONFIG
     training_arguments = TrainingArguments(
-        per_device_train_batch_size=4,
-        per_device_eval_batch_size=4,
-        gradient_accumulation_steps=2,
+        per_device_train_batch_size=2,
+        per_device_eval_batch_size=2,
+        gradient_accumulation_steps=4,
         num_train_epochs=3,
         eval_strategy="steps",
-        eval_steps=200,
-        save_steps=200,
+        eval_steps=1000,
+        save_steps=1000,
         warmup_steps=50,
         learning_rate=2e-4,
         fp16=not is_bfloat16_supported(),
         bf16=is_bfloat16_supported(),
-        logging_steps=10,
+        logging_steps=100,
         optim="adamw_8bit",
         weight_decay=0.01,
         lr_scheduler_type="linear",
@@ -83,7 +90,7 @@ def main():
         eval_dataset=val_dataset,
         tokenizer=tokenizer,
         dataset_text_field="text",
-        max_seq_length=2048,
+        max_seq_length=1024,
         dataset_num_proc=2,
         packing=True,
         args=training_arguments,
